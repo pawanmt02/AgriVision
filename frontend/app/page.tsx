@@ -17,7 +17,19 @@ import {
 import { TRANSLATIONS, SupportedLanguage } from "./i18n";
 import { Sparkles, Leaf, MapPin, History, BarChart3, Wifi, WifiOff } from "lucide-react";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8005";
+const resolveBackendUrl = (): string => {
+  if (process.env.NEXT_PUBLIC_BACKEND_URL) {
+    return process.env.NEXT_PUBLIC_BACKEND_URL;
+  }
+  if (typeof window !== "undefined") {
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+      return "http://localhost:8005";
+    }
+    // On Vercel / production domain, use built-in Next.js Serverless API routes
+    return "";
+  }
+  return "http://localhost:8005";
+};
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"scan" | "map" | "history" | "analytics">("scan");
@@ -26,6 +38,7 @@ export default function Home() {
   const t = TRANSLATIONS[langKey] || TRANSLATIONS.en;
   const [serverOnline, setServerOnline] = useState<boolean>(false);
   const [currentDiagnostic, setCurrentDiagnostic] = useState<DiagnosticResponse | null>(null);
+  const [backendUrl] = useState<string>(resolveBackendUrl);
   
   // Data states
   const [sampleImages, setSampleImages] = useState<SampleLeaf[]>([]);
@@ -34,34 +47,9 @@ export default function Home() {
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
-  // Initialize and check backend connection
-  useEffect(() => {
-    checkHealth();
-    fetchSampleImages();
-    fetchOutbreaks();
-    fetchScans();
-    fetchAnalytics();
-
-    // Get user GPS
-    if (typeof window !== "undefined" && "geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setUserLocation({
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
-          });
-        },
-        () => {
-          // Default farm location
-          setUserLocation({ lat: 28.6139, lng: 77.2090 });
-        }
-      );
-    }
-  }, []);
-
-  const checkHealth = async () => {
+  const checkHealth = async (url: string = backendUrl) => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/health`, { method: "GET" });
+      const res = await fetch(`${url}/api/health`, { method: "GET" });
       if (res.ok) {
         setServerOnline(true);
       } else {
@@ -72,9 +60,9 @@ export default function Home() {
     }
   };
 
-  const fetchSampleImages = async () => {
+  const fetchSampleImages = async (url: string = backendUrl) => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/sample-images`);
+      const res = await fetch(`${url}/api/sample-images`);
       if (res.ok) {
         const data = await res.json();
         setSampleImages(data);
@@ -84,9 +72,9 @@ export default function Home() {
     }
   };
 
-  const fetchOutbreaks = async () => {
+  const fetchOutbreaks = async (url: string = backendUrl) => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/outbreaks`);
+      const res = await fetch(`${url}/api/outbreaks`);
       if (res.ok) {
         const data = await res.json();
         setOutbreaks(data);
@@ -96,9 +84,9 @@ export default function Home() {
     }
   };
 
-  const fetchScans = async () => {
+  const fetchScans = async (url: string = backendUrl) => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/scans`);
+      const res = await fetch(`${url}/api/scans`);
       if (res.ok) {
         const data = await res.json();
         setScans(data);
@@ -108,9 +96,9 @@ export default function Home() {
     }
   };
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = async (url: string = backendUrl) => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/analytics`);
+      const res = await fetch(`${url}/api/analytics`);
       if (res.ok) {
         const data = await res.json();
         setAnalytics(data);
@@ -120,12 +108,37 @@ export default function Home() {
     }
   };
 
+  // Initialize and check backend connection
+  useEffect(() => {
+    queueMicrotask(() => {
+      checkHealth();
+      fetchSampleImages();
+      fetchOutbreaks();
+      fetchScans();
+      fetchAnalytics();
+
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            setUserLocation({
+              lat: pos.coords.latitude,
+              lng: pos.coords.longitude,
+            });
+          },
+          () => {
+            setUserLocation({ lat: 28.6139, lng: 77.2090 });
+          }
+        );
+      }
+    });
+  }, []);
+
   const handleDiagnosisComplete = (diagnostic: DiagnosticResponse) => {
     setCurrentDiagnostic(diagnostic);
     // Refresh history, outbreaks, analytics in background
-    fetchScans();
-    fetchOutbreaks();
-    fetchAnalytics();
+    fetchScans(backendUrl);
+    fetchOutbreaks(backendUrl);
+    fetchAnalytics(backendUrl);
   };
 
   const handleLocateOnMap = () => {
@@ -171,7 +184,7 @@ export default function Home() {
                 onDiagnosticComplete={handleDiagnosisComplete}
                 selectedLanguage={selectedLanguage}
                 sampleImages={sampleImages}
-                backendUrl={BACKEND_URL}
+                backendUrl={backendUrl}
               />
             )}
           </div>
