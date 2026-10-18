@@ -98,16 +98,15 @@ export default function LeafScanner({
   }, [selectedLanguage]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isScanning) {
-      interval = setInterval(() => {
-        setTelemetryIndex((prev) => (prev + 1) % t.scanner.telemetry.length);
-      }, 700);
-    } else {
+    if (!isScanning) return;
+    const interval = setInterval(() => {
+      setTelemetryIndex((prev) => (prev + 1) % t.scanner.telemetry.length);
+    }, 700);
+    return () => {
+      clearInterval(interval);
       setTelemetryIndex(0);
-    }
-    return () => clearInterval(interval);
-  }, [isScanning, selectedLanguage]);
+    };
+  }, [isScanning, selectedLanguage, t.scanner.telemetry.length]);
 
   const startCamera = async () => {
     try {

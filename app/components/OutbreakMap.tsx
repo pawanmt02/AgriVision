@@ -53,63 +53,7 @@ export default function OutbreakMap({
   // Unique crops in outbreaks
   const uniqueCrops = Array.from(new Set(outbreaks.map((o) => o.crop_name.split(" ")[0])));
 
-  // Initialize Leaflet Map
-  useEffect(() => {
-    let isMounted = true;
-
-    async function initMap() {
-      if (typeof window === "undefined" || !mapContainerRef.current) return;
-      if (leafletMapRef.current) return; // already initialized
-
-      const L = (await import("leaflet")).default;
-
-      // Default center: User position or global center
-      const centerLat = userLocation?.lat || 28.6139;
-      const centerLng = userLocation?.lng || 77.2090;
-
-      const map = L.map(mapContainerRef.current, {
-        zoomControl: false,
-        attributionControl: false,
-      }).setView([centerLat, centerLng], userLocation ? 5 : 3);
-
-      // Dark theme CartoDB basemap
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
-        {
-          maxZoom: 19,
-          subdomains: "abcd",
-        }
-      ).addTo(map);
-
-      // Add Zoom control at top right
-      L.control.zoom({ position: "topright" }).addTo(map);
-
-      leafletMapRef.current = map;
-      renderMarkers(L, map);
-    }
-
-    initMap();
-
-    return () => {
-      isMounted = false;
-      if (leafletMapRef.current) {
-        leafletMapRef.current.remove();
-        leafletMapRef.current = null;
-      }
-    };
-  }, []);
-
-  // Update Markers when filter or outbreaks change
-  useEffect(() => {
-    async function updateMarkers() {
-      if (!leafletMapRef.current) return;
-      const L = (await import("leaflet")).default;
-      renderMarkers(L, leafletMapRef.current);
-    }
-    updateMarkers();
-  }, [filteredOutbreaks, userLocation]);
-
-  const renderMarkers = (L: any, map: any) => {
+  function renderMarkers(L: any, map: any) {
     // Clear existing markers
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
@@ -185,7 +129,64 @@ export default function OutbreakMap({
 
       markersRef.current.push(marker);
     });
-  };
+  }
+
+  // Initialize Leaflet Map
+  useEffect(() => {
+    let isMounted = true;
+
+    async function initMap() {
+      if (typeof window === "undefined" || !mapContainerRef.current) return;
+      if (leafletMapRef.current) return; // already initialized
+
+      const L = (await import("leaflet")).default;
+
+      // Default center: User position or global center
+      const centerLat = userLocation?.lat || 28.6139;
+      const centerLng = userLocation?.lng || 77.2090;
+
+      const map = L.map(mapContainerRef.current, {
+        zoomControl: false,
+        attributionControl: false,
+      }).setView([centerLat, centerLng], userLocation ? 5 : 3);
+
+      // Dark theme CartoDB basemap
+      L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
+        {
+          maxZoom: 19,
+          subdomains: "abcd",
+        }
+      ).addTo(map);
+
+      // Add Zoom control at top right
+      L.control.zoom({ position: "topright" }).addTo(map);
+
+      leafletMapRef.current = map;
+      renderMarkers(L, map);
+    }
+
+    initMap();
+
+    return () => {
+      isMounted = false;
+      if (leafletMapRef.current) {
+        leafletMapRef.current.remove();
+        leafletMapRef.current = null;
+      }
+    };
+  }, []);
+
+  // Update Markers when filter or outbreaks change
+  useEffect(() => {
+    async function updateMarkers() {
+      if (!leafletMapRef.current) return;
+      const L = (await import("leaflet")).default;
+      renderMarkers(L, leafletMapRef.current);
+    }
+    updateMarkers();
+  }, [filteredOutbreaks, userLocation]);
+
 
   const flyToCluster = (cluster: OutbreakCluster) => {
     setActiveCluster(cluster);

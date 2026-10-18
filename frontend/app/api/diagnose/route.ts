@@ -265,7 +265,7 @@ export async function POST(req: NextRequest) {
 
     // Diseased Leaf Pathology:
     let diseaseName = "Cercospora / Target Leaf Spot (ಎಲೆ ಚುಕ್ಕೆ ರೋಗ - Cercospora spp.)";
-    let pathogen = "Fungal";
+    const pathogen = "Fungal";
     let organicPlan = "5% Neem Seed Kernel Extract (NSKE) + Pseudomonas fluorescens bio-agent spray (10g/L). Prune severely spotted lower leaves.";
     let chemicalPlan = "Saaf (Carbendazim 12% + Mancozeb 63% WP) @ 2.0g/L water, or Difenoconazole 25% EC @ 0.5-1.0 ml/L water. PHI 14 days.";
     let speechKn = "ಬೆಳೆಯ ಎಲೆಯಲ್ಲಿ ತೀವ್ರ ಎಲೆ ಚುಕ್ಕೆ ರೋಗ ಕಂಡುಬಂದಿದೆ. ಸಾಫ್ ಅಥವಾ ಡೈಫೆನೊಕೊನಜೋಲ್ ಸಿಂಪಡಿಸಿ.";
