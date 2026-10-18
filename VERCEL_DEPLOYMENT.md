@@ -4,23 +4,22 @@ AgriVision is pre-configured for seamless, zero-config deployment on [Vercel](ht
 
 ---
 
-## ⚡ Option 1: Deploy with Git (Recommended)
+## ⚡ How to Fix the 404 & Deploy Cleanly
 
-1. **Push your code to GitHub / GitLab / Bitbucket**:
-   ```bash
-   git add .
-   git commit -m "Add Vercel deployment configuration"
-   git push origin main
+### 1. In your Vercel Dashboard (Currently open in your browser)
+1. In the **agrivision1** project, click the **Settings** tab at the top.
+2. Under **General**, find **Root Directory**.
+3. Click **Edit**, type or select:
    ```
+   frontend
+   ```
+4. Click **Save**.
 
-2. **Import into Vercel Dashboard**:
-   - Go to [vercel.com/new](https://vercel.com/new).
-   - Select your **AgriVision** repository.
-   - **Framework Preset**: Select **Next.js**.
-   - **Root Directory**:
-     - If you want Vercel to build the root repo directly, keep `./` (the root `vercel.json` will automatically build `frontend/`).
-     - Or click **Edit** and set Root Directory to `frontend`.
-   - Click **Deploy**!
+### 2. Redeploy
+1. Click the **Deployments** tab at the top.
+2. Click the three dots (`...`) next to the latest deployment.
+3. Click **Redeploy** (you can leave "Use existing build cache" unchecked).
+4. Once completed, your app will be live at `https://agrivision1-six.vercel.app/` without any 404 errors!
 
 ---
 
