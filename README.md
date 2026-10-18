@@ -26,7 +26,7 @@
    - **🧪 Chemical & Targeted Controls**: Active molecule recommendations, FRAC resistance group rotation, dilution per Liter, dosage per Acre/Hectare, mandatory Pre-Harvest Interval (PHI in days), and worker PPE safety warnings.
 
 4. **Multi-Language Spoken Voice Read-Out (TTS)**
-   - Integrated accessibility text-to-speech engine reading out diagnostic results in **English, Hindi (हिंदी), Spanish (Español), Swahili (Kiswahili), and French (Français)**.
+   - Integrated accessibility text-to-speech engine reading out diagnostic results in **English, Kannada (ಕನ್ನಡ), Hindi (हिंदी), Spanish (Español), Swahili (Kiswahili), and French (Français)** with dedicated farmer voice assistance.
 
 5. **Geospatial Outbreak GIS Mapping (Supabase PostGIS)**
    - Maps GPS coordinates of every scan to track regional pathogen vectors.
@@ -155,3 +155,17 @@ SUPABASE_URL=https://xyz.supabase.co
 SUPABASE_KEY=eyJ...
 ```
 *Note: If no API keys are provided, AgriVision AI automatically engages its built-in expert plant pathology heuristic synthesizer, ensuring 100% functionality out-of-the-box!*
+
+---
+
+## ⚡ Deployment to Vercel
+
+AgriVision is pre-configured for instant zero-configuration deployment on Vercel:
+
+1. Import `pawanmt02/agrivision1` into [Vercel](https://vercel.com/new).
+2. In **Project Settings** -> **General** -> **Root Directory**, set to:
+   ```text
+   frontend
+   ```
+3. Click **Deploy**. Vercel will automatically compile the Next.js App Router and deploy all Serverless Edge API routes (`/api/diagnose`, `/api/health`, `/api/outbreaks`).
+4. Read the full guide in [VERCEL_DEPLOYMENT.md](file:///c:/Users/Pawan/AgriVision/VERCEL_DEPLOYMENT.md).
