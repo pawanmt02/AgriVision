@@ -13,7 +13,7 @@ Start-Sleep -Seconds 2
 
 # 2. Start Next.js PWA Frontend
 Write-Host "[2/2] Starting Next.js Frontend on port 3000..." -ForegroundColor Cyan
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$RootPath\frontend'; npm run dev"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$RootPath'; npm run dev"
 
 Write-Host "AgriVision AI is launching!" -ForegroundColor Green
 Write-Host "Backend API:  http://localhost:8005/docs" -ForegroundColor Yellow

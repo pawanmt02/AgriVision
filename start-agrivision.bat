@@ -10,7 +10,7 @@ start "AgriVision Backend Core" cmd /k "cd /d %~dp0backend && python main.py"
 timeout /t 2 /nobreak > nul
 
 echo [2/2] Starting Next.js Frontend on port 3000...
-start "AgriVision Frontend" cmd /k "cd /d %~dp0frontend && npm run dev"
+start "AgriVision Frontend" cmd /k "cd /d %~dp0 && npm run dev"
 
 echo.
 echo Both services launched!
